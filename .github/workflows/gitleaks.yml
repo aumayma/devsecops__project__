@@ -1,0 +1,16 @@
+name: Secret Scanning
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Run GitLeaks
+        uses: zricethezav/gitleaks-action@v1.6.0

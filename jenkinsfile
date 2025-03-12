@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/aumayma/devsecops__project__.git'
+            }
+        }
+
+        stage('Scan avec GitLeaks') {
+            steps {
+                sh 'gitleaks detect --source . --verbose --redact || true'
+            }
+        }
+
+        stage('Notifier sur Slack') {
+            steps {
+                script {
+                    def secretsFound = sh(script: "gitleaks detect --source . --verbose", returnStatus: true)
+                    if (secretsFound == 0) {
+                        slackSend (channel: '#alerts', message: '✅ Aucun secret détecté. Déploiement autorisé.')
+                    } else {
+                        slackSend (channel: '#alerts', message: '🚨 Secret détecté ! Déploiement annulé.')
+                        error('Secrets détectés, arrêt du pipeline.')
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t mon-application .'
+            }
+        }
+
+        stage('Déploiement') {
+            steps {
+                sh 'docker run -d -p 8081:8080 mon-application'
+            }
+        }
+    }
+}
