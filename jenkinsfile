@@ -18,18 +18,4 @@ stage('Run Gitleaks') {
                 }
             }
         }
-       # stage('Notifier sur Slack') {
-        #    steps {
-         #       script {
-          #          def secretsFound = sh(script: "gitleaks detect --source . --verbose", returnStatus: true)
-           #         if (secretsFound == 0) {
-            #            slackSend (channel: '#alerts', message: '✅ Aucun secret détecté. Déploiement autorisé.')
-             #       } else {
-              #          slackSend (channel: '#alerts', message: '🚨 Secret détecté ! Déploiement annulé.')
-               #         error('Secrets détectés, arrêt du pipeline.')
-                #    }
-                #}
-            #}
-        #}
-
-        
+              
