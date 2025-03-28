@@ -33,7 +33,7 @@ stage('Run Gitleaks') {
                     emailext subject: subject,
                              body: body,
                              to: 'selmioumayma89@gmail.com',
-                             from: 'jenkins@example.com',
+                             from: 'selmioumayma89@gmail.com',
                              mimeType: 'text/html'
                     
                     if (secretsFound != 0) {
