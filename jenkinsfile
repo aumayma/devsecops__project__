@@ -21,3 +21,31 @@ stage('Run Gitleaks') {
               
 }
 }
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo "Compilation en cours..."
+            }
+        }
+    }
+    post {
+        failure {
+            emailext subject: "🚨 Build Failed : #${BUILD_NUMBER}",
+                     body: """
+                     Bonjour Team,
+
+                     Le build #${BUILD_NUMBER} a échoué sur Jenkins.
+
+                     💡 Vérifiez les logs : ${BUILD_URL}
+
+                     -- 
+                     Cordialement,
+                     Jenkins
+                     """,
+                     to: 'selmioumayma89@gmail.com'
+        }
+    }
+}
+
