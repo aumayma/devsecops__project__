@@ -19,33 +19,29 @@ stage('Run Gitleaks') {
             }
         }
               
-}
-}
-pipeline {
-    agent any
-    stages {
-        stage('Build') {
+
+        stage('Notifier par E-mail') {
             steps {
-                echo "Compilation en cours..."
+                script {
+                    def secretsFound = sh(script: 'gitleaks detect --source . --verbose --redact', returnStatus: true)
+                    
+                    def subject = secretsFound == 0 ? '✅ Aucun secret détecté' : '🚨 Secret détecté dans le code !'
+                    def body = secretsFound == 0 ? 
+                        'Bonne nouvelle ! Aucun secret n’a été détecté. Tu peux continuer ton déploiement. 🚀' : 
+                        'Attention ! Des secrets ont été trouvés dans le code. Corrige-les avant de pousser le code. ❌'
+
+                    emailext subject: subject,
+                             body: body,
+                             to: 'selmioumayma89@gmail.com',
+                             from: 'jenkins@example.com',
+                             mimeType: 'text/html'
+                    
+                    if (secretsFound != 0) {
+                        error('Secrets détectés, arrêt du pipeline.')
+                    }
+                }
             }
         }
-    }
-    post {
-        failure {
-            emailext subject: "🚨 Build Failed : #${BUILD_NUMBER}",
-                     body: """
-                     Bonjour Team,
 
-                     Le build #${BUILD_NUMBER} a échoué sur Jenkins.
-
-                     💡 Vérifiez les logs : ${BUILD_URL}
-
-                     -- 
-                     Cordialement,
-                     Jenkins
-                     """,
-                     to: 'selmioumayma89@gmail.com'
-        }
-    }
 }
-
+}
