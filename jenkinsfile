@@ -71,8 +71,10 @@ stage('Stop Old Container') {
     }
 }
 stage('Start New Container') {
-     sh "ssh ${SSH_USER}@${SERVER_IP} 'docker run -d -p 8081:8080 --name monapp ${DOCKER_USER}/monapp:latest'"
+    steps {
+        sh "ssh ${SSH_USER}@${SERVER_IP} 'docker run -d -p 8081:8080 --name monapp ${DOCKER_USER}/monapp:latest'"
     }
+}
 }
 }
 
