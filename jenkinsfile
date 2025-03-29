@@ -22,20 +22,7 @@ stage('Run Gitleaks') {
                 }
             }
         }
-              
-
-       
-stage('Security Check Before Deployment') {
-            steps {
-                script {
-                    def result = sh(script: 'gitleaks detect --source . --verbose --redact', returnStatus: true)
-                    echo "Gitleaks result: ${result}"
-                    if (result != 0) {
-                        error("🚨 Des secrets ont été détectés ! Corrige-les avant de déployer.")
-                    }
-                }
-            }
-        }
+             
 
 
 stage('Build Docker Image') {
@@ -43,6 +30,16 @@ stage('Build Docker Image') {
         sh "docker build -t monapp:latest ."
     }
 }
+stage('Scan Docker Image with Trivy') {
+            steps {
+                script {
+                    def scanResult = sh(script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${DOCKER_IMAGE}:${DOCKER_TAG}", returnStatus: true)
+                    if (scanResult != 0) {
+                        error("🚨 Des vulnérabilités critiques ont été détectées ! Corrige-les avant de continuer.")
+                    }
+                }
+            }
+        }
 stage('Login to Docker Hub') {
     steps {
         script {
