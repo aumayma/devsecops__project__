@@ -14,6 +14,7 @@ environment {
 stage('Run Gitleaks') {
             steps {
                 script {
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     def result = sh(script: 'gitleaks detect --source . --verbose --redact', returnStatus: true)
                     echo "Gitleaks result: ${result}"
                     if (result != 0) {
@@ -22,7 +23,7 @@ stage('Run Gitleaks') {
                 }
             }
         }
-             
+      }
 
 
 stage('Build Docker Image') {
