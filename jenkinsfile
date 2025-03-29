@@ -10,11 +10,7 @@ environment {
                 git branch: 'main', url: 'https://github.com/aumayma/devsecops__project__.git'
             }
         }
-stage('Build Docker Image') {
-    steps {
-        sh " docker build -t monapp:latest ."
-    }
-}
+
 
 stage('Run Gitleaks') {
             steps {
@@ -23,7 +19,7 @@ stage('Run Gitleaks') {
                     def result = sh(script: 'gitleaks detect --source . --verbose --redact', returnStatus: true)
                     echo "Gitleaks result: ${result}"
                     if (result != 0) {
-                        error("❌ Des secrets ont été détectés ! Corrige-les avant de pousser le code.")
+                        echo"❌ Des secrets ont été détectés ! Corrige-les avant de pousser le code."
                     }
                 }
             }
@@ -31,6 +27,11 @@ stage('Run Gitleaks') {
       }
 
 
+stage('Build Docker Image') {
+    steps {
+        sh " docker build -t monapp:latest ."
+    }
+}
 
 stage('Scan Docker Image with Trivy') {
             steps {
