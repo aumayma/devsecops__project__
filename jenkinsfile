@@ -24,6 +24,12 @@ stage('Run Gitleaks') {
             }
         }
       }
+stage('Build Maven Project') {
+    steps {
+        script {
+            sh 'mvn clean install'
+        }
+    }
 
 stage('List Files') {
     steps {
@@ -33,12 +39,6 @@ stage('List Files') {
         }
     }
 }
-stage('Build Maven Project') {
-    steps {
-        script {
-            sh 'mvn clean install'
-        }
-    }
 }
 
 
