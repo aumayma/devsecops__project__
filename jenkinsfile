@@ -1,6 +1,9 @@
 pipeline {
     agent any
-
+environment {
+        SSH_USER = 'oumayma'
+        SERVER_IP = '192.168.1.150'
+    }
     stages {
         stage('Checkout Code') {
             steps {
@@ -12,6 +15,7 @@ stage('Run Gitleaks') {
             steps {
                 script {
                     def result = sh(script: 'gitleaks detect --source . --verbose --redact', returnStatus: true)
+                    echo "Gitleaks result: ${result}"
                     if (result != 0) {
                         error("❌ Des secrets ont été détectés ! Corrige-les avant de pousser le code.")
                     }
@@ -20,33 +24,55 @@ stage('Run Gitleaks') {
         }
               
 
-        stage('Notifier par E-mail') {
+       
+stage('Security Check Before Deployment') {
             steps {
                 script {
-                    def secretsFound = sh(script: 'gitleaks detect --source . --verbose --redact', returnStatus: true)
-                    
-                    def subject = secretsFound == 0 ? '✅ Aucun secret détecté' : '🚨 Secret détecté dans le code !'
-                    def body = secretsFound == 0 ? 
-                        'Bonne nouvelle ! Aucun secret n’a été détecté. Tu peux continuer ton déploiement. 🚀' : 
-                        'Attention ! Des secrets ont été trouvés dans le code. Corrige-les avant de pousser le code. ❌'
-
-                    emailext subject: subject,
-                             body: body,
-                             to: 'selmioumayma89@gmail.com',
-                             from: 'selmioumayma89@gmail.com',
-                             mimeType: 'text/html'
-                    
-                    if (secretsFound != 0) {
-                        error('Secrets détectés, arrêt du pipeline.')
+                    def result = sh(script: 'gitleaks detect --source . --verbose --redact', returnStatus: true)
+                    echo "Gitleaks result: ${result}"
+                    if (result != 0) {
+                        error("🚨 Des secrets ont été détectés ! Corrige-les avant de déployer.")
                     }
                 }
             }
         }
+
+
 stage('Build Docker Image') {
     steps {
         sh "docker build -t monapp:latest ."
     }
 }
+stage('Login to Docker Hub') {
+    steps {
+        script {
 
+            def dockerCredentials = credentials('DOCKER_CREDENTIALS')
+            def dockerUser = dockerCredentials.split(':')[0]
+            def dockerPass = dockerCredentials.split(':')[1]
+            sh "docker login -u ${dockerUser} -p ${dockerPass}"
+        }
+    }
+}
+stage('Push to Docker Hub') {
+    steps {
+        sh "docker tag monapp:latest ${dockerUser}/monapp:latest"
+        sh "docker push ${dockerUser}/monapp:latest"
+    }
+}
+stage('Connect to Server') {
+    steps {
+        sh "ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SERVER_IP} 'echo Connected!'"
+    }
+}
+stage('Stop Old Container') {
+    steps {
+        sh "ssh ${SSH_USER}@${SERVER_IP} 'docker stop monapp || true && docker rm monapp || true'"
+    }
+}
+stage('Start New Container') {
+     sh "ssh ${SSH_USER}@${SERVER_IP} 'docker run -d -p 8081:8080 --name monapp ${DOCKER_USER}/monapp:latest'"
+    }
+}
 }
 }

@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # 3️⃣ Copier le fichier JAR généré
-COPY target/monapp.jar monapp.jar
+COPY target/devsecops-project-1.0-SNAPSHOT.jar monapp.jar
 
 # 4️⃣ Exposer le port sur lequel l’application tourne
 EXPOSE 8081
