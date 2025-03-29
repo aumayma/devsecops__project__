@@ -28,7 +28,7 @@ stage('Run Gitleaks') {
 
 stage('Build Docker Image') {
     steps {
-        sh "docker build -t monapp:latest ."
+        sh "sudo docker build -t monapp:latest ."
     }
 }
 stage('Scan Docker Image with Trivy') {
