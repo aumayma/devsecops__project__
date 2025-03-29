@@ -30,7 +30,7 @@ stage('Build Maven Project') {
             sh 'mvn clean install'
         }
     }
-
+}
 stage('List Files') {
     steps {
         script {
