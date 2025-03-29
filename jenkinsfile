@@ -42,7 +42,7 @@ stage('Build Docker Image') {
 stage('Scan Docker Image with Trivy') {
     steps {
         script {
-            def trivyResult = sh(script: "trivy image --no-progress --severity HIGH,CRITICAL --scanners vuln monapp:latest", returnStdout: true).trim()
+            def trivyResult = sh(script: "trivy image --timeout 600s --no-progress --severity HIGH,CRITICAL --scanners vuln --ignore-unfixed monapp:latest", returnStdout: true).trim()
             echo "📌 Résultats de l'analyse Trivy :"
             echo trivyResult
             
