@@ -3,6 +3,7 @@ pipeline {
 environment {
         SSH_USER = 'oumayma'
         SERVER_IP = '192.168.1.150'
+        DOCKER_IMAGE = 'monapp:latest'
     }
     stages {
         stage('Checkout Code') {
@@ -34,7 +35,7 @@ stage('Build Application') {
 
 stage('Build Docker Image') {
     steps {
-        sh " docker build -t monapp:latest ."
+        sh "docker build -t ${DOCKER_IMAGE} ."
     }
 }
 
@@ -61,8 +62,8 @@ stage('Login to Docker Hub') {
 }
 stage('Push to Docker Hub') {
     steps {
-        sh "docker tag monapp:latest ${dockerUser}/monapp:latest"
-        sh "docker push ${dockerUser}/monapp:latest"
+        sh "docker tag ${DOCKER_IMAGE} ${dockerUser}/${DOCKER_IMAGE}"
+        sh "docker push ${dockerUser}/${DOCKER_IMAGE}"
     }
 }
 stage('Connect to Server') {
