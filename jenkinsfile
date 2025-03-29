@@ -42,17 +42,20 @@ stage('Build Docker Image') {
 stage('Scan Docker Image with Trivy') {
     steps {
         script {
-            def trivyResult = sh(script: "trivy image --timeout 600s --no-progress --severity HIGH,CRITICAL --scanners vuln --ignore-unfixed monapp:latest", returnStdout: true).trim()
-            echo "📌 Résultats de l'analyse Trivy :"
-            echo trivyResult
-            
-            // Vérifier s'il y a des vulnérabilités
-            if (trivyResult.contains("CRITICAL") || trivyResult.contains("HIGH")) {
+            def exitCode = sh(
+                script: "trivy image --timeout 600s --no-progress --severity HIGH,CRITICAL --scanners vuln --ignore-unfixed --exit-code 1 monapp:latest",
+                returnStatus: true // 🔴 Capture le code de sortie au lieu de la sortie standard
+            )
+
+            if (exitCode != 0) {
                 error("🚨 Des vulnérabilités critiques ont été détectées ! ANNULATION du déploiement.")
+            } else {
+                echo "✅ Aucune vulnérabilité critique détectée. Déploiement autorisé."
             }
         }
     }
 }
+
 
 stage('Login to Docker Hub') {
     steps {
