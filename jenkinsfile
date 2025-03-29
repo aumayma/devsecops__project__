@@ -24,22 +24,6 @@ stage('Run Gitleaks') {
             }
         }
       }
-stage('Build Maven Project') {
-    steps {
-        script {
-            sh 'mvn clean install'
-        }
-    }
-}
-stage('List Files') {
-    steps {
-        script {
-            sh 'ls -l'
-            sh 'ls -l target/'
-        }
-    }
-}
-}
 
 
 stage('Build Docker Image') {
