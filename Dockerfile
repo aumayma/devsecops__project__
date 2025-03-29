@@ -12,3 +12,4 @@ EXPOSE 8081
 
 # 5️⃣ Lancer l’application au démarrage du conteneur
 CMD ["java", "-jar", "monapp.jar"]
+

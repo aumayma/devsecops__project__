@@ -25,6 +25,11 @@ stage('Run Gitleaks') {
         }
       }
 
+stage('List Files') {
+    steps {
+        sh "ls -l target/"
+    }
+}
 
 stage('Build Docker Image') {
     steps {
