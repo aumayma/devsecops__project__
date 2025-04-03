@@ -90,7 +90,8 @@ stage('Push to Docker Hub') {
 
         stage('Connect to Server via SSH Agent') {
     steps {
-         sh "ssh -o StrictHostKeyChecking=no oumayma@192.168.1.150 'echo Connected!'"
+         sh 'ssh -i /var/lib/jenkins/.ssh/my_new_key -o StrictHostKeyChecking=no oumayma@192.168.1.150 echo Connected!'
+
     }
 }
 
