@@ -39,19 +39,25 @@ stage('Build Docker Image') {
     }
 }
 
-stage('Scan Docker Image with Trivy') {
+stage('Scan with TruffleHog') {
     steps {
         script {
-            def trivyResult = sh(script: "trivy image --timeout 600s --no-progress --severity HIGH,CRITICAL --scanners vuln --ignore-unfixed monapp:latest || exit 1", returnStdout: true)
-            echo "📌 Résultats de l'analyse Trivy :"
-            echo trivyResult
+            def exitCode = sh(
+                script: """
+                trufflehog filesystem --json . | tee trufflehog-results.json
+                """,
+                returnStatus: true
+            )
 
-            if (trivyResult.contains("CRITICAL") || trivyResult.contains("HIGH")) {
-                error("🚨 Des vulnérabilités critiques ont été détectées ! ANNULATION du déploiement.")
+            if (exitCode != 0) {
+                error("🚨 TruffleHog a détecté des secrets dans le code source ou les fichiers de configuration ! ANNULATION du déploiement.")
+            } else {
+                echo "✅ Aucun secret détecté. Déploiement autorisé."
             }
         }
     }
 }
+
 
 
 
