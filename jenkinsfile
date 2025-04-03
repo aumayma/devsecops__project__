@@ -62,7 +62,7 @@ stage('Install Detect-secrets') {
         stage('Scan for Secrets') {
             steps {
                 
-                sh 'detect-secrets scan --all-files'
+                sh '/home/oumayma/.local/bin/detect-secrets scan --all-files'
             }
         }
 
