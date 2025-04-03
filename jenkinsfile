@@ -51,6 +51,7 @@ stage('Build Docker Image') {
 
         stage('Scan Secrets') {
             steps {
+                sh 'pip install detect-secrets'
                 sh 'detect-secrets scan --all-files > secrets_report.json'
                 script {
                     def secretsFound = sh(script: "grep -q 'has_high_entropy_string\": true' secrets_report.json", returnStatus: true)
