@@ -53,7 +53,7 @@ stage('Install Detect-secrets') {
                 script {
                     
                     sh 'pip install --user detect-secrets'
-                    sh 'export PATH=$PATH:/home/oumayma/.local/bin'
+                    
                     
                     
                 }
