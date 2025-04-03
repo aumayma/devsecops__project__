@@ -90,9 +90,11 @@ stage('Push to Docker Hub') {
 
         stage('Connect to Server via SSH Agent') {
     steps {
-        sshagent(credentials: ['MY_SSH_KEY_ID']) {
-            sh "ssh -o StrictHostKeyChecking=no \$SSH_USER@\$SERVER_IP 'echo Connected!'"
+         script {
+         withCredentials([sshUserPrivateKey(credentialsId: 'MY_SSH_KEY', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                sh "ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \$SSH_USER@\$SERVER_IP 'echo Connected!'"
         }
+      }
     }
 }
 
