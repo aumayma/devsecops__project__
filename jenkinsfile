@@ -12,7 +12,14 @@ environment {
             }
         }
 
-
+stage('Configure Git') {
+    steps {
+        script {
+            // Configure Git to increase postBuffer size
+            sh "git config --global http.postBuffer 524288000"
+        }
+    }
+}
 stage('Run Gitleaks') {
             steps {
                 script {
