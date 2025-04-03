@@ -49,9 +49,6 @@ stage('Build Docker Image') {
     }
 }
 
-pipeline {
-    agent any
-    stages {
         stage('Scan Secrets') {
             steps {
                 sh 'detect-secrets scan --all-files > secrets_report.json'
@@ -65,8 +62,8 @@ pipeline {
                 }
             }
         }
-    }
-}
+   
+
 
 
 
