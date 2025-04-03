@@ -94,7 +94,7 @@ stage('Push to Docker Hub') {
                     withCredentials([string(credentialsId: 'MY_SSH_KEY', variable: 'SSH_KEY')]) {
                         sh """
                             
-                    echo "\$SSH_KEY" | awk '{gsub(/\\r/,"")}1' | sed 's/\\\\n/\\n/g' > private_key.pem
+                    echo "\$SSH_KEY"  > private_key.pem
                     chmod 600 private_key.pem
                     ssh -i private_key.pem -o StrictHostKeyChecking=no \$SSH_USER@\$SERVER_IP 'echo Connected!'
                     rm -f private_key.pem
