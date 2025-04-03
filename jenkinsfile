@@ -72,7 +72,7 @@ stage('Push to Docker Hub') {
         sh "docker push ${dockerUser}/${DOCKER_IMAGE}"
     }
 }
-stages {
+stages{
         stage('Connect to Server') {
             steps {
                 script {
