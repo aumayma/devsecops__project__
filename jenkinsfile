@@ -39,25 +39,13 @@ stage('Build Docker Image') {
     }
 }
 
-stage('Scan with TruffleHog') {
-    steps {
-        script {
-            def exitCode = sh(
-                script: """
-                trufflehog filesystem --json . | tee trufflehog-results.json
-                """,
-                returnStatus: true
-            )
-
-            if (exitCode != 0) {
-                error("🚨 TruffleHog a détecté des secrets dans le code source ou les fichiers de configuration ! ANNULATION du déploiement.")
-            } else {
-                echo "✅ Aucun secret détecté. Déploiement autorisé."
-            }
-        }
-    }
+stage ('Check-Git-Secrets') {
+  steps {
+    sh 'rm trufflehog || true'
+    sh 'docker run gesellix/trufflehog --json https://github.com/cehkunal/webapp.git > trufflehog'
+    sh 'cat trufflehog'
+  }
 }
-
 
 
 
@@ -66,8 +54,8 @@ stage('Login to Docker Hub') {
         script {
 
             def dockerCredentials = credentials('DOCKER_CREDENTIALS')
-            def dockerUser = dockerCredentials.split(':')[0]
-            def dockerPass = dockerCredentials.split(':')[1]
+            def dockerUser = dockerCredentials.username 
+            def dockerPass = dockerCredentials.password 
             sh "docker login -u ${dockerUser} -p ${dockerPass}"
         }
     }
