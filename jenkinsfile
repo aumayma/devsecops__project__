@@ -54,8 +54,8 @@ stage('Install Detect-secrets') {
                     
                     sh 'pip install --user detect-secrets'
                     
-                    sh 'chmod +x /home/oumayma/.local/bin/detect-secrets'
-                    sh 'export PATH=$PATH:/home/oumayma/.local/bin'
+                    
+                    
                 }
             }
         }
