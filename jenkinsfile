@@ -6,8 +6,7 @@ environment {
         DOCKER_IMAGE = 'monapp:latest'
         dockerUser = 'oumaymaselmi'  
         dockerPass = '56788776Oumayma@'
-        SSH_KEY = 'id_ed25519
-'  
+        SSH_KEY = 'id_ed25519'  
     }
     stages {
         stage('Checkout Code') {
