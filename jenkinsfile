@@ -4,6 +4,8 @@ environment {
         SSH_USER = 'oumayma'
         SERVER_IP = '192.168.1.150'
         DOCKER_IMAGE = 'monapp:latest'
+        dockerUser = 'oumaymaselmi'  
+        dockerPass = '56788776Oumayma@' 
     }
     stages {
         stage('Checkout Code') {
@@ -58,11 +60,7 @@ stage ('Check-Git-Secrets') {
 
 stage('Login to Docker Hub') {
     steps {
-        script {
-
-            def dockerCredentials = credentials('DOCKER_CREDENTIALS')
-            def dockerUser = dockerCredentials.username 
-            def dockerPass = dockerCredentials.password 
+        script { 
             sh "docker login -u ${dockerUser} -p ${dockerPass}"
         }
     }
