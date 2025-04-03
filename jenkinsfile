@@ -48,22 +48,23 @@ stage('Build Docker Image') {
         sh "docker build -t ${DOCKER_IMAGE} ."
     }
 }
-
-        stage('Scan Secrets') {
+stage('Install Detect-secrets') {
             steps {
-                sh 'pip install detect-secrets'
-                sh 'detect-secrets scan --all-files > secrets_report.json'
                 script {
-                    def secretsFound = sh(script: "grep -q 'has_high_entropy_string\": true' secrets_report.json", returnStatus: true)
-                    if (secretsFound == 0) {
-                        echo"❌ Des secrets ont été détectés, échec du build !"
-                    } else {
-                        echo "✅ Aucun secret trouvé."
-                    }
+                    
+                    sh 'pip install --user detect-secrets'
+                    
+                    
+                    sh 'export PATH=$PATH:/home/oumayma/.local/bin'
                 }
             }
         }
-   
+        stage('Scan for Secrets') {
+            steps {
+                
+                sh 'detect-secrets scan --all-files'
+            }
+        }
 
 
 
