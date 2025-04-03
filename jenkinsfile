@@ -6,7 +6,7 @@ environment {
         DOCKER_IMAGE = 'monapp:latest'
         dockerUser = 'oumaymaselmi'  
         dockerPass = '56788776Oumayma@'
-        SSH_KEY = 'id_ed25519'  
+        SSH_KEY = 'MY_SSH_KEY'  
     }
     stages {
         stage('Checkout Code') {
@@ -72,11 +72,18 @@ stage('Push to Docker Hub') {
         sh "docker push ${dockerUser}/${DOCKER_IMAGE}"
     }
 }
-stage('Connect to Server') {
-    steps {
-        sh "ssh -i ${SSH_KEY}  -o StrictHostKeyChecking=no ${SSH_USER}@${SERVER_IP} 'echo Connected!'"
-    }
-}
+stages {
+        stage('Connect to Server') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'MY_SSH_KEY', variable: 'SSH_KEY')]) {
+                        sh """
+                            ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \$SSH_USER@\$SERVER_IP 'echo Connected!'
+                        """
+                    }
+                }
+            }
+        }
 stage('Stop Old Container') {
     steps {
         sh "ssh ${SSH_USER}@${SERVER_IP} 'docker stop monapp || true && docker rm monapp || true'"
