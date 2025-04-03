@@ -6,7 +6,7 @@ environment {
         DOCKER_IMAGE = 'monapp:latest'
         dockerUser = 'oumaymaselmi'  
         dockerPass = '56788776Oumayma@'
-        SSH_KEY = 'MY_SSH_KEY'
+        
        
 
   
@@ -91,7 +91,7 @@ stage('Push to Docker Hub') {
         stage('Connect to Server via SSH Agent') {
     steps {
          script {
-         withCredentials([sshUserPrivateKey(credentialsId: 'MY_SSH_KEY', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+         withCredentials([sshUserPrivateKey(credentialsId: 'MY_SSH_KEY_ID', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                 sh "ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \$SSH_USER@\$SERVER_IP 'echo Connected!'"
         }
       }
