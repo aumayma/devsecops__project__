@@ -88,21 +88,14 @@ stage('Push to Docker Hub') {
     }
 }
 
-        stage('Connect to Server') {
-            steps {
-                script {
-                    withCredentials([string(credentialsId: 'MY_SSH_KEY', variable: 'SSH_KEY')]) {
-                        sh """
-                            
-                    echo "\$SSH_KEY"  > private_key.pem
-                    chmod 600 private_key.pem
-                    ssh -i private_key.pem -o StrictHostKeyChecking=no \$SSH_USER@\$SERVER_IP 'echo Connected!'
-                    rm -f private_key.pem
-                        """
-                    }
-                }
-            }
+        stage('Connect to Server via SSH Agent') {
+    steps {
+        sshagent(credentials: ['MY_SSH_KEY_ID']) {
+            sh "ssh -o StrictHostKeyChecking=no \$SSH_USER@\$SERVER_IP 'echo Connected!'"
         }
+    }
+}
+
 stage('Stop Old Container') {
     steps {
         sh "ssh ${SSH_USER}@${SERVER_IP} 'docker stop monapp || true && docker rm monapp || true'"
