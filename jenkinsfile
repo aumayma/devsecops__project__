@@ -7,7 +7,7 @@ environment {
         dockerUser = 'oumaymaselmi'  
         dockerPass = '56788776Oumayma@'
         SSH_KEY = 'MY_SSH_KEY'
-        PATH=/usr/local/bin:$PATH
+       
 
   
     }
