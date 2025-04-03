@@ -49,13 +49,25 @@ stage('Build Docker Image') {
     }
 }
 
-stage ('Check-Git-Secrets') {
-  steps {
-    sh 'rm trufflehog || true'
-    sh 'docker run gesellix/trufflehog --json https://github.com/cehkunal/webapp.git > trufflehog'
-    sh 'cat trufflehog'
-  }
+pipeline {
+    agent any
+    stages {
+        stage('Scan Secrets') {
+            steps {
+                sh 'detect-secrets scan --all-files > secrets_report.json'
+                script {
+                    def secretsFound = sh(script: "grep -q 'has_high_entropy_string\": true' secrets_report.json", returnStatus: true)
+                    if (secretsFound == 0) {
+                        echo"❌ Des secrets ont été détectés, échec du build !"
+                    } else {
+                        echo "✅ Aucun secret trouvé."
+                    }
+                }
+            }
+        }
+    }
 }
+
 
 
 
