@@ -53,7 +53,8 @@ stage('Install Detect-secrets') {
                 script {
                     
                     sh 'pip install --user detect-secrets'
-                    
+                    export PATH=/usr/local/bin:$PATH
+
                     
                     
                 }
@@ -62,7 +63,7 @@ stage('Install Detect-secrets') {
         stage('Scan for Secrets') {
             steps {
                 
-                sh '/home/oumayma/.local/bin/detect-secrets scan --all-files'
+                sh 'detect-secrets scan --all-files'
             }
         }
 
