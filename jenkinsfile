@@ -97,12 +97,12 @@ stage('Push to Docker Hub') {
 
 stage('Stop Old Container') {
     steps {
-        sh "ssh ${SSH_USER}@${SERVER_IP} 'docker stop monapp || true && docker rm monapp || true'"
+        sh "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${SSH_USER}@${SERVER_IP} 'docker stop monapp || true && docker rm monapp || true'"
     }
 }
 stage('Start New Container') {
     steps {
-        sh "ssh -i ${SSH_KEY} ${SSH_USER}@${SERVER_IP} 'docker run -d -p 8081:8080 --name monapp ${DOCKER_USER}/monapp:latest'"
+        sh "ssh --i ${SSH_KEY} -o StrictHostKeyChecking=no ${SSH_KEY} ${SSH_USER}@${SERVER_IP} 'docker run -d -p 8081:8080 --name monapp ${DOCKER_USER}/monapp:latest'"
     }
 }
 }
