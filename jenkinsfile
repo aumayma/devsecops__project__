@@ -95,14 +95,6 @@ stage('Push to Docker Hub') {
     }
 }
 
-stage('Stop Old Container') {
-    steps {
-            sh """
-        ssh -i /var/lib/jenkins/.ssh/my_new_key -o StrictHostKeyChecking=no ${SSH_USER}@${SERVER_IP} \\
-        'if docker ps -q -f name=monapp; then docker stop monapp && docker rm monapp; else echo "No container named monapp"; fi'
-        """
-    }
-}
 stage('Start New Container') {
     steps {
         sh """
