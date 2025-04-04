@@ -73,7 +73,13 @@ stage('Install Detect-secrets') {
 
 
 
-
+ stage ('Check-Git-Secrets') {
+      steps {
+        sh 'rm trufflehog || true'
+        sh 'docker run gesellix/trufflehog --json https://github.com/aumayma/devsecops__project__.git > trufflehog'
+        sh 'cat trufflehog'
+      }
+    }
 stage('Login to Docker Hub') {
     steps {
         script { 
