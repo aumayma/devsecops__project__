@@ -97,12 +97,18 @@ stage('Push to Docker Hub') {
 
 stage('Stop Old Container') {
     steps {
-        sh "ssh -i /var/lib/jenkins/.ssh/my_new_key  -o StrictHostKeyChecking=no ${SSH_USER}@${SERVER_IP} 'docker stop monapp || true && docker rm monapp || true'"
+         sh """
+         ssh -i /var/lib/jenkins/.ssh/my_new_key -o StrictHostKeyChecking=no ${SSH_USER}@${SERVER_IP} \\
+        'docker ps -q -f name=monapp | xargs -r docker stop monapp && docker rm monapp'
+         """
     }
 }
 stage('Start New Container') {
     steps {
-        sh "ssh --i /var/lib/jenkins/.ssh/my_new_key  -o StrictHostKeyChecking=no $ssh --i /var/lib/jenkins/.ssh/my_new_key ${SSH_USER}@${SERVER_IP} 'docker run -d -p 8081:8080 --name monapp ${DOCKER_USER}/monapp:latest'"
+        sh """
+        ssh -i /var/lib/jenkins/.ssh/my_new_key -o StrictHostKeyChecking=no ${SSH_USER}@${SERVER_IP} \\
+        'docker run -d -p 8081:8080 --name monapp ${dockerUser}/${DOCKER_IMAGE}'
+        """
     }
 }
 }
