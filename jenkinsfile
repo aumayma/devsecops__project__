@@ -17,15 +17,6 @@ environment {
                 git branch: 'main', url: 'https://github.com/aumayma/devsecops__project__.git'
             }
         }
-
-stage('Configure Git') {
-    steps {
-        script {
-            // Configure Git to increase postBuffer size
-            sh "git config --global http.postBuffer 524288000"
-        }
-    }
-}
 stage('Run Gitleaks') {
             steps {
                 script {
